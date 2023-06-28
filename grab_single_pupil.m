@@ -1,4 +1,4 @@
-function p = grab_single_pupil(d_c, filtered)
+function pupil = grab_single_pupil(d_c, filtered)
 
     % future issues: add tosca capabilities here. incorporate the same
     % basic code structure for impale and tosca
@@ -45,7 +45,9 @@ function p = grab_single_pupil(d_c, filtered)
 
     try
         load(full_path);
-      
+        if ~exist('pupil', 'var')
+            pupil = p;
+        end
     catch
         dumDir = split(experiment_dir,'\');
         dums = [dumDir{4},'\',dumDir{6},'\',dumDir{7},'\',dumDir{8}];
@@ -53,8 +55,8 @@ function p = grab_single_pupil(d_c, filtered)
         
         %if isequal(d_c(1,:).stim_software, "Impale")
             
-        [p, inner, outer] = extract_pupil_impale(camera_folder, impale_file, sync_file, filtered);
-        save(full_path, 'p');
+        [pupil, inner, outer] = extract_pupil_impale(camera_folder, impale_file, sync_file, filtered);
+        save(full_path, 'pupil');
         %else
        % disp("GOTTA ADD THIS CAPABILITY <3 BECCA 5.31.23")
         %end

@@ -1,0 +1,36 @@
+function bf3 = response_at_BF(neural, pupil, cell_boolean, trial_threshold)
+
+    % The best frequency is simply the max for each cell when averaged
+    % across trials. BF contains a index from 1:size(neural.zscores,2) for
+    % each cell. 
+    [~, BF] = max(nanmean(neural.zscores,3)');
+
+    % Iterate through each cell and grab the neural data corresponding to
+    % the best frequency and the pupil data corresponding to those trials. 
+    for i = 1:length(BF)
+        best_frequency(i,:) = squeeze(neural.zscores(i, BF(i), :));
+        pupil_ind = neural.index(i);
+        bf_pupil(i,:) = squeeze(pupil.bins(pupil_ind, BF(i), :));
+    end
+
+    % Next break the data into pupil states. Since you'll definitely have
+    % different numbers of trials for each cell, instead make a cell array
+    bf2 = {};
+    for i = 1:size(best_frequency,1)
+        for k = 1:max(bf_pupil, [],'all')
+            spp = best_frequency(i, bf_pupil(i,:) == k);
+            spp = spp(~isnan(spp));
+            bf2(i,k) = {squeeze(spp)};
+        end
+    end
+
+    trial_cutoff = cellfun(@numel, bf2) < trial_threshold;
+    bf3 = cellfun(@mean, bf2);
+    bf3(trial_cutoff) = nan;
+
+    bf3 = bf3(cell_boolean,:,:);
+    errorbar(nanmean(bf3), sem(bf3), '-o');
+    axis padded
+    
+    
+end

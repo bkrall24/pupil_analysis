@@ -1,4 +1,4 @@
-function [p, mi, pairwise] = determine_pupil_modulation_index(response, bins, by_stim)
+function pmi = determine_pupil_modulation_index(response, bins, num_bins, by_stim, exclude_adjacent)
     
     % Inputs:
     %   response: cell x stimulus x trial data. Note to properly calculate
@@ -23,12 +23,25 @@ function [p, mi, pairwise] = determine_pupil_modulation_index(response, bins, by
     %   value of the modulation index for each combination of pupil states
     %   for each cell
     
-    num_bins = max(bins, [], 'all');
     
     % method: for every combination of bins (i.e. 1 v 2, 1 v 3, 2 v 3 for 3
     % bins) calculate an asymmetry index of (resp1 - resp2)/(resp1 +
     % resp2).
-    pairwise = nchoosek(unique(bins), 2);
+    %pairwise = nchoosek(unique(bins), 2);
+    bins = squeeze(bins);
+    pairwise = nchoosek(1:num_bins, 2);
+    
+    if exclude_adjacent
+        dif = pairwise(:,2) - pairwise(:,1);
+        pairwise = pairwise(abs(dif) ~= 1, :);
+    end
+    
+    if by_stim
+        mi = nan(size(response,1), size(response,2),  size(pairwise,1));
+    else
+        mi = nan(size(response,1), size(pairwise,1));
+    end
+    
     for i = 1:size(pairwise,1)
         
         pair = pairwise(i,:);
@@ -37,21 +50,21 @@ function [p, mi, pairwise] = determine_pupil_modulation_index(response, bins, by
         % stimulus dependent calculation
             for j = 1:size(response, 2)
                 resp = squeeze(response(:, j,:));
-                b = squeeze(bins(j,:));
-                resp2 = mean(resp(:, b == pair(1)), 2);
-                resp1 = mean(resp(:, b == pair(2)),2);
+                b = (bins(j,:));
+                resp2 = nanmean(resp(:, b == pair(1)), 2);
+                resp1 = nanmean(resp(:, b == pair(2)),2);
 
                 if all(isnan(resp1)) || all(isnan(resp2))
-                    mi(:,i,j) = nan(size(response,1),1);
+                    mi(:,j,i) = nan(size(response,1),1);
                 else
-                    mi(:,i,j) = (resp1 - resp2)./(resp1 + resp2);
+                    mi(:,j,i) = (resp1 - resp2)./(resp1 + resp2);
                 end
             end
             
         else
         % stimulus independent calculation
-            resp2 = mean(response(:, bins == pair(1)), [2,3]);
-            resp1 = mean(response(:, bins == pair(2)), [2,3]);
+            resp2 = nanmean(response(:, bins == pair(1)), [2,3]);
+            resp1 = nanmean(response(:, bins == pair(2)), [2,3]);
 
            if all(isnan(resp1)) || all(isnan(resp2))
                 mi(:,i) = nan;
@@ -63,7 +76,7 @@ function [p, mi, pairwise] = determine_pupil_modulation_index(response, bins, by
 
     end
     
-    for i = 1:length(mi)
+    for i = 1:size(mi,1)
         if by_stim
             all_stim = mi(i,:,:);
             p(i) = ttest(all_stim(:));
@@ -73,6 +86,8 @@ function [p, mi, pairwise] = determine_pupil_modulation_index(response, bins, by
         
     end
    
-    
+    pmi.p = p';
+    pmi.mi = mi;
+    %pmi.pairwise = pairwise;
     
 end
