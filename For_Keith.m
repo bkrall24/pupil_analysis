@@ -5,7 +5,7 @@
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
 
-spreadsheet = "D:\Data\Arousal_Project\dataSpreadsheet.csv";
+spreadsheet = "D:\Data\Arousal_Project\local_Arousal_Project.csv";
 sp = readtable(spreadsheet);
 
 
