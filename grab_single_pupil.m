@@ -33,10 +33,11 @@ function pupil = grab_single_pupil(d_c, filtered)
         else
             sync_folder = '\SyncData00';
         end
-        if (exp.Date) < 100000
-            thorFolder = [exp.MainPath, exp.CellType, '\2P\', exp.Animal, '\0', num2str(exp.Date) sync_folder, impaleIndex];
+        
+        if (d_c.Date) < 100000
+            thorFolder = [d_c.MainPath, d_c.CellType, '\2P\', d_c.Animal, '\0', num2str(d_c.Date) sync_folder, impaleIndex];
         else
-            thorFolder = [exp.MainPath, exp.CellType, '\2P\', exp.Animal, '\', num2str(exp.Date) sync_folder, impaleIndex];
+            thorFolder = [d_c.MainPath, d_c.CellType, '\2P\', d_c.Animal, '\', num2str(d_c.Date) sync_folder, impaleIndex];
         end
         data_sync = dir2(thorFolder, '.h5', '/s');
         sync_file = data_sync{1};
