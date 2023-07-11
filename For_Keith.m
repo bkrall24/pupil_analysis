@@ -6,7 +6,12 @@
 % Initial extraction code relies on the data spreadsheets. 
 
 spreadsheet = "D:\Data\Arousal_Project\dataSpreadsheet.csv";
-sp = readtable(spreadsheet);
+
+% Convert FOV column into char to allow users to input numerical as
+% well as alphanumerical values
+opts = detectImportOptions(spreadsheet);
+opts = setvartype(opts,{'FOV'},'char');
+sp   = readtable(spreadsheet,opts);
 
 
 %% Determine pupil binning
