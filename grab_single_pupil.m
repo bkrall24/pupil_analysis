@@ -16,10 +16,22 @@ function pupil = grab_single_pupil(d_c, filtered)
         mkdir(experiment_dir{1}, 'MAT');
     end 
 
+    
+    % Change from NAS directory to local directory (delete later)  [dtd 6/30/23, Keith]
+    % Ensures camera and impale folders are linked to NAS whereas the other
+    % folders aren't
+    experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'W:', 'D:');
+    
+   
+    
     full_path = [experiment_dir{1},'\MAT\pupil_data.mat'];
     
     experiment_file = [experiment_dir{1},'\MAT\initial_analysis.mat'];
 
+    
+
+    
+    
     
     if isfile(experiment_file)
         sync_file = experiment_file;
