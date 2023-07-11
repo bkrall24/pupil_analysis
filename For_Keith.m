@@ -43,7 +43,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'IT';
+cell_type = 'ET';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -55,16 +55,31 @@ p = norm_p.animal(contains(sp{:,2}, cell_type));
 % but the cell_index will be the same for cells that are matched. I would
 % save these structs as they are very useful starting points for analysis.
 
+% [cells * stim * reps]. The 'cells' are based on matched indexing, whereby
+% the no. of cells is based on whether it was matched to the first day of
+% imaging (ie, if a cell didn't match to a cell from Day 1, then it was
+% given a new cell ID). This can turn a FOV with 300 cells matched across 6
+% days, and ramp up the no. of cells to 1000.
 match_boo = true;
 [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,...
     match_boo);
+
+
+% Save the above structs
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
 
 %% Bin Pupil
 % Just use discretize to easily bin each row of your all_pupil struct. A
 % nice thing here is you can change the binning incredibly easily with just
 % two lines of code.
 
-binned = arrayfun(@(x) discretize(x.pupil, edge_struct.even_all), ...
+% Option to discretize based on custom pupil bins
+edge_struct.custom = [0 .5 .75 1];
+
+binned = arrayfun(@(x) discretize(x.pupil, edge_struct.custom), ...
     all_pupil, 'UniformOutput', false);
 [all_pupil.bins] = binned{:};
 

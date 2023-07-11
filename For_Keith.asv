@@ -6,7 +6,12 @@
 % Initial extraction code relies on the data spreadsheets. 
 
 spreadsheet = "D:\Data\Arousal_Project\dataSpreadsheet.csv";
-sp = readtable(spreadsheet);
+
+% Convert FOV column into char to allow users to input numerical as
+% well as alphanumerical values
+opts = detectImportOptions(spreadsheet);
+opts = setvartype(opts,{'FOV'},'char');
+sp   = readtable(spreadsheet,opts);
 
 
 %% Determine pupil binning
@@ -50,6 +55,10 @@ p = norm_p.animal(contains(sp{:,2}, cell_type));
 % but the cell_index will be the same for cells that are matched. I would
 % save these structs as they are very useful starting points for analysis.
 
+% [cells * stim * reps]. The 'cells' are based on matched indexing, whereby
+% the no. of cells is based on whether it was matched to the first day of
+% imaging (ie, if a cell didn't match to a cell from Day 1, then it was
+% given a new cell ID). This can turn a FOV with 300 cells m
 match_boo = true;
 [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,...
     match_boo);
