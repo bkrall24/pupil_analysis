@@ -10,7 +10,7 @@ function [bins, edges] = bin_pupil(p, num_bins, method)
     elseif method == 2
         % generate bins with equal samples but different bin sizes
         p(isnan(p)) = nanmedian(p, 'all');
-        sortedData= sort(p(:));
+        sortedData = sort(p(:));
         samplesPerBin = ceil(numel(p) / num_bins);
         binRanges = zeros(num_bins, 2);
         startIndex = 1;
