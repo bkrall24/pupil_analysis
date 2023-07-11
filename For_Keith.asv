@@ -33,12 +33,12 @@ num_bins = 3;
 % edges = low:(high-low)/num_bins:high
 
 %% Grab data
-% In this case, I'm selecting 'nonspecific' cell type. Use whatever method
+% Select data based on a given cell type. Use whatever method
 % you want to select data (i.e. choose experiments) but you'll want to have
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'Nonspecific';
+cell_type = 'IT';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -67,7 +67,7 @@ binned = arrayfun(@(x) discretize(x.pupil, edge_struct.even_all), ...
 % This index is less than ideal for low values, I'm going to continue to
 % validate it and improve it
 pmi = arrayfun(@(x,y) determine_pupil_modulation_index(x.spikes, y.bins,...
-    num_bins, false), all_neural, all_pupil);
+    num_bins, false, true), all_neural, all_pupil);
 
 
 %% Determine the max number of trials that a single cell might have
@@ -90,10 +90,16 @@ pupil = concatenate_struct_array(all_pupil, max_pupil);
 % first dimension of neural data that refers to the corresponding row in
 % the pupil data.
 
-index = arrayfun(@(x) repmat(x.index, x.cell_count,1), all_ref, 'UniformOutput', false);
+index = arrayfun(@(x) repmat(x.index, x.cell_count,1), all_ref, ...
+    'UniformOutput', false);
 index = cat(1, index{:});
 neural.index = index;
 
 
+%% From here, do your analysis. 
+%  response_at_BF is a good example of a simple process to easily generate
+%  your data.
 
+bf = response_at_BF(neural.zscores, neural.index, pupil.bins, ...
+    logical(neural.sound_resp), 10);
 

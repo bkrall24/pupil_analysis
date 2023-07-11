@@ -5,7 +5,7 @@
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
 
-spreadsheet = "D:\Data\Arousal_Project\local_Arousal_Project.csv";
+spreadsheet = "D:\Data\Arousal_Project\dataSpreadsheet.csv";
 sp = readtable(spreadsheet);
 
 
@@ -33,12 +33,12 @@ num_bins = 3;
 % edges = low:(high-low)/num_bins:high
 
 %% Grab data
-% In this case, I'm selecting 'nonspecific' cell type. Use whatever method
+% Select data based on a given cell type. Use whatever method
 % you want to select data (i.e. choose experiments) but you'll want to have
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'Nonspecific';
+cell_type = 'IT';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
