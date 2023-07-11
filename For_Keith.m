@@ -116,6 +116,18 @@ index = cat(1, index{:});
 neural.index = index;
 
 
+%% Create new data_choice variable to use on older code
+% To use the same data_choice table for the other code, the match_dir
+% column class must be changed from a 'cell' to a 'string'
+
+% Create new variable, convert column format from cell to string, assign to
+% the same column and rename the column
+data_csv       = data_choice;
+data_csv(:,24) = varfun(@string, data_csv(:,23));
+data_csv(:,23) = [];
+data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
+
+
 %% From here, do your analysis. 
 %  response_at_BF is a good example of a simple process to easily generate
 %  your data.
