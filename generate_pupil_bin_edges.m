@@ -12,20 +12,21 @@ function [edge_struct, norm_p] = generate_pupil_bin_edges(data_choice, num_bins)
     % reference in animal_ref.
     
     for i = 1:height(data_choice)
+        % p  --> {no. of session days in spreadsheeet} [frames * trials] (regardless of matched/unmatched)
         p{i} = grab_single_pupil(data_choice(i,:), 0);
     end
     
-    ct = data_choice{:, 2};
-    animal_id = data_choice{:,3};
-    date = data_choice{:,4};
+    ct = data_choice{:, 2};        % cell type
+    animal_id = data_choice{:,3};  % mouse ID
+    date = data_choice{:,4};       % session date
 
    
-    by_session = normalize_pupil(p, true);
+    by_session = normalize_pupil(p, true);     % same dimensions as 'p'
     by_animal = normalize_pupil(p, false, findgroups(animal_id));
 
     [groups, names] = findgroups(animal_id);
-    by_animal2 = splitapply(@(x){cat(2,x{:})}, by_animal, groups');
-    by_session2 = splitapply(@(x){cat(2,x{:})}, by_session, groups');
+    by_animal2 = splitapply(@(x){cat(2,x{:})}, by_animal, groups');    % {mouse} [frames * trials]
+    by_session2 = splitapply(@(x){cat(2,x{:})}, by_session, groups');  % {mouse} [frames * trials]
 
     all_p = cat(2, by_animal{:});
 
