@@ -52,8 +52,8 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
 
                     % Load the data and pull out the relevant data and nan-pad
                     % to match across FOVs
-                    d = grab_single_experiment(match_choice(row,:));
-                   
+                    d = grab_single_experiment(match_choice(row,:));                   
+                    
                     [neural_struct, pupil_struct] = compile_data_fields(match_pupil{row}, d, ...
                         spont_window, resp_window);
                   
