@@ -13,7 +13,7 @@ function [neural, pupil] = combine_matched_cells(neural_match, pupil_match, ref_
     
     [a,b] = groupcounts(cell_id);
     
-    % Determine the max number of trials a given cell could have had
+    % Determine the max number of trials (per stim) a given cell could have had
     daily_trial = cellfun(@(x) size(x,3), {neural_match.spikes});
     trials = sum(daily_trial);
     
