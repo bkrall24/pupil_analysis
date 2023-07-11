@@ -43,7 +43,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'IT';
+cell_type = 'ET';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -58,17 +58,28 @@ p = norm_p.animal(contains(sp{:,2}, cell_type));
 % [cells * stim * reps]. The 'cells' are based on matched indexing, whereby
 % the no. of cells is based on whether it was matched to the first day of
 % imaging (ie, if a cell didn't match to a cell from Day 1, then it was
-% given a new cell ID). This can turn a FOV with 300 cells m
+% given a new cell ID). This can turn a FOV with 300 cells matched across 6
+% days, and ramp up the no. of cells to 1000.
 match_boo = true;
 [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,...
     match_boo);
+
+
+% Save the above structs
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
 
 %% Bin Pupil
 % Just use discretize to easily bin each row of your all_pupil struct. A
 % nice thing here is you can change the binning incredibly easily with just
 % two lines of code.
 
-binned = arrayfun(@(x) discretize(x.pupil, edge_struct.even_all), ...
+% Option to discretize based on custom pupil bins
+edge_struct.custom = [0 .5 .75 1];
+
+binned = arrayfun(@(x) discretize(x.pupil, edge_struct.custom), ...
     all_pupil, 'UniformOutput', false);
 [all_pupil.bins] = binned{:};
 
@@ -103,6 +114,31 @@ index = arrayfun(@(x) repmat(x.index, x.cell_count,1), all_ref, ...
     'UniformOutput', false);
 index = cat(1, index{:});
 neural.index = index;
+
+
+%% Create new data_choice variable to use on older code
+% To use the same data_choice table for the other code, the match_dir
+% column class must be changed from a 'cell' to a 'string'
+
+table_var = data_choice;
+
+% Specify the column index to change the format
+column_index = 23;
+
+col_data = table_var(:,column_index);
+blah = string(table_var{:,23});
+table_var(:,23) = [];
+table_var.matchMatDir(:) = table(blah);
+
+
+
+class(table_var{:, column_index})
+
+% Convert the column format from cell to string
+table_var{:, column_index} = cellfun(@string, table_var{:, column_index}, 'UniformOutput', false);
+
+% Check the format of the column
+element_format = class(table_var{1, column_index})
 
 
 %% From here, do your analysis. 
