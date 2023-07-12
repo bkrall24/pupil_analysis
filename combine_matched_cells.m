@@ -19,7 +19,7 @@ function [neural, pupil] = combine_matched_cells(neural_match, pupil_match, ref_
     
     % initialize nan matrices of combination of all days
     spikes = nan(length(b), size(neural_match(1).spikes,2), trials);
-    zscores = nan(length(b), size(neural_match(1).spikes,2), trials);
+    zscores = nan(length(b), size(neural_match(1).zscores,2), trials);
     resp = [];
     
     % iterate across cells
@@ -39,7 +39,7 @@ function [neural, pupil] = combine_matched_cells(neural_match, pupil_match, ref_
                 end_ind = sum(daily_trial(exp(1:j)));
                 start_ind = end_ind - daily_trial(exp(j)) + 1;
                 spikes(i,:,start_ind:end_ind) =  neural_match(exp(j)).spikes(neural_match(exp(j)).cell_ids == b(i),:,:);
-                zscores(i,:,start_ind:end_ind) =  neural_match(exp(j)).spikes(neural_match(exp(j)).cell_ids == b(i),:,:);
+                zscores(i,:,start_ind:end_ind) =  neural_match(exp(j)).zscores(neural_match(exp(j)).cell_ids == b(i),:,:);
                 
             end
         
@@ -49,7 +49,7 @@ function [neural, pupil] = combine_matched_cells(neural_match, pupil_match, ref_
             end_ind = sum(daily_trial(exp));
             start_ind = end_ind - daily_trial(exp) + 1;
             spikes(i,:,start_ind:end_ind) =  neural_match(exp).spikes(neural_match(exp).cell_ids == b(i),:,:);
-            zscores(i,:,start_ind:end_ind) =  neural_match(exp).spikes(neural_match(exp).cell_ids == b(i),:,:);
+            zscores(i,:,start_ind:end_ind) =  neural_match(exp).zscores(neural_match(exp).cell_ids == b(i),:,:);
         end
     end
         
