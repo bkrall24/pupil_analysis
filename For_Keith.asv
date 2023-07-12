@@ -2,6 +2,10 @@
 % The goal of this code is simplify data extraction and organization to
 % streamline analysis of neural data based on pupil states
 
+%% Add path
+clearvar
+addpath(genpath('W:\Code\Becca'));
+
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
 
@@ -65,11 +69,20 @@ match_boo = true;
     match_boo);
 
 
-% Save the above structs
-save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
-save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
-save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
-save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+% % Save the above structs
+% save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+% save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+% save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+% save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+
+
+%% Load data
+
+cell_type = 'ET';
+load_loc  = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\'];
+load([load_loc,'all_neural'])
+load([load_loc,'all_pupil'])
+load([load_loc,'all_ref'])
 
 %% Bin Pupil
 % Just use discretize to easily bin each row of your all_pupil struct. A
@@ -120,28 +133,15 @@ neural.index = index;
 % To use the same data_choice table for the other code, the match_dir
 % column class must be changed from a 'cell' to a 'string'
 
-table_var = data_choice;
-
-% Specify the column index to change the format
-column_index = 23;
-
-col_data = table_var(:,column_index);
-blah = string(table_var{:,23});
-table_var(:,23) = [];
-table_var.matchMatDir(:) = table(blah);
+% Create new variable, convert column format from cell to string, assign to
+% the same column and rename the column
+data_csv       = data_choice;
+data_csv(:,24) = varfun(@string, data_csv(:,23));
+data_csv(:,23) = [];
+data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
 
 
-
-class(table_var{:, column_index})
-
-% Convert the column format from cell to string
-table_var{:, column_index} = cellfun(@string, table_var{:, column_index}, 'UniformOutput', false);
-
-% Check the format of the column
-element_format = class(table_var{1, column_index})
-
-
-%% From here, do your analysis. 
+%% From here, do your analysis.
 %  response_at_BF is a good example of a simple process to easily generate
 %  your data.
 

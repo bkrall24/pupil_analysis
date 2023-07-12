@@ -2,6 +2,10 @@
 % The goal of this code is simplify data extraction and organization to
 % streamline analysis of neural data based on pupil states
 
+%% Add path
+clearvars
+addpath(genpath('W:\Code\Becca'));
+
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
 
@@ -43,7 +47,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'IT';
+cell_type = 'ET';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -65,16 +69,20 @@ match_boo = true;
     match_boo);
 
 
-% Save the above structs
-save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
-save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
-save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
-save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+% % Save the above structs
+% save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+% save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+% save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+% save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
 
 
-%%
+%% Load data
 
-
+cell_type = 'ET';
+load_loc  = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\'];
+load([load_loc,'all_neural'])
+load([load_loc,'all_pupil'])
+load([load_loc,'all_ref'])
 
 %% Bin Pupil
 % Just use discretize to easily bin each row of your all_pupil struct. A
@@ -133,7 +141,7 @@ data_csv(:,23) = [];
 data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
 
 
-%% From here, do your analysis. 
+%% From here, do your analysis.
 %  response_at_BF is a good example of a simple process to easily generate
 %  your data.
 
