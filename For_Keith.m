@@ -43,7 +43,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'ET';
+cell_type = 'IT';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -70,6 +70,11 @@ save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
 save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
 save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
 save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+
+
+%%
+
+
 
 %% Bin Pupil
 % Just use discretize to easily bin each row of your all_pupil struct. A
