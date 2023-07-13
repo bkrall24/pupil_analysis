@@ -3,7 +3,7 @@
 % streamline analysis of neural data based on pupil states
 
 %% Add path
-clearvar
+clearvars
 addpath(genpath('W:\Code\Becca'));
 
 %% Determine data of interest
@@ -69,11 +69,11 @@ match_boo = true;
     match_boo);
 
 
-% % Save the above structs
-% save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
-% save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
-% save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
-% save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+% Save the above structs
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
 
 
 %% Load data
@@ -147,4 +147,23 @@ data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
 
 bf = response_at_BF(neural.zscores, neural.index, pupil.bins, ...
     logical(neural.sound_resp), 10);
+
+% Plot aesthetics
+gcf
+box off
+xticks(1:num_bins)
+xticklabels(edge_struct.custom(2:end))
+xlabel('Pupil (% max)')
+ylim([0.3 1.1])
+ylabel('Response (z-scored)')
+title(sprintf([groupTypes{group}]))
+sgtitle('Response at BF')
+
+%% 
+
+groupNames = {'Nonspecific','IT','ET','CT'};  % corresponding to folders
+titleNames = {'L 2/3','ET','L5 IT','CT'};     % to use as plot titles
+groupColor = [0, 0.4471, 0.7412 ; 0.8510, 0.3255, 0.0980 ; ...
+                            0.9294, 0.6941, 0.1255; 0.7176, 0.2745, 1];
+
 

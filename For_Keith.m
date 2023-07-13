@@ -5,6 +5,7 @@
 %% Add path
 clearvars
 addpath(genpath('W:\Code\Becca'));
+addpath(genpath('W:\Code\Keith'));
 
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
@@ -47,7 +48,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'ET';
+cell_type = 'Nonspecific';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -69,11 +70,11 @@ match_boo = true;
     match_boo);
 
 
-% % Save the above structs
-% save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
-% save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
-% save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
-% save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+% Save the above structs
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
 
 
 %% Load data
@@ -148,3 +149,14 @@ data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
 bf = response_at_BF(neural.zscores, neural.index, pupil.bins, ...
     logical(neural.sound_resp), 10);
 
+
+%% Set pupil binning parameters
+
+% Get nBins and edges
+num_bins = 3;
+[edge_struct, norm_p] = generate_pupil_bin_edges(sp, num_bins);
+
+% Option to discretize based on custom pupil bins
+edge_struct.custom = [0 .5 .7 1];
+
+plotBFState(edge_struct.custom)
