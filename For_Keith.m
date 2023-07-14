@@ -18,7 +18,8 @@ opts = detectImportOptions(spreadsheet);
 opts = setvartype(opts,{'FOV'},'char');
 sp   = readtable(spreadsheet,opts);
 
-
+removeThis = ~cellfun(@isempty, sp.matchMatDir);
+sp(removeThis,:) = [];
 %% Determine pupil binning
 % Decide on a number of bins you want to include. This creates edges_struct
 % with options to use as edges and more can be easily added, if you
@@ -71,7 +72,7 @@ match_boo = true;
 
 
 % Save the above structs
-save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\withoutMatched\']
 save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
 save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
 save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
@@ -136,10 +137,11 @@ neural.index = index;
 
 % Create new variable, convert column format from cell to string, assign to
 % the same column and rename the column
-data_csv       = data_choice;
+data_csv       = sp;
 data_csv(:,24) = varfun(@string, data_csv(:,23));
 data_csv(:,23) = [];
 data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
+data_csv.MainPath = repmat({'D:\Data\Arousal_Project\'}, size(data_csv, 1), 1);
 
 
 %% From here, do your analysis.
