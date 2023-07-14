@@ -3,7 +3,6 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
     % hardcoded variables
     resp_window = 16:25;
     spont_window = 1:15;
-    trials = 120;
 
     % initialize variables
     last_ind = 0;
