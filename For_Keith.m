@@ -18,8 +18,11 @@ opts = detectImportOptions(spreadsheet);
 opts = setvartype(opts,{'FOV'},'char');
 sp   = readtable(spreadsheet,opts);
 
-removeThis = ~cellfun(@isempty, sp.matchMatDir);
-sp(removeThis,:) = [];
+
+% removeThis = ~cellfun(@isempty, sp.matchMatDir);
+% sp(removeThis,:) = [];
+
+
 %% Determine pupil binning
 % Decide on a number of bins you want to include. This creates edges_struct
 % with options to use as edges and more can be easily added, if you
@@ -72,7 +75,7 @@ match_boo = true;
 
 
 % Save the above structs
-save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\withoutMatched\']
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
 save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
 save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
 save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
@@ -92,7 +95,7 @@ load([load_loc,'all_ref'])
 % two lines of code.
 
 % Option to discretize based on custom pupil bins
-edge_struct.custom = [0 .5 .75 1];
+edge_struct.custom = [0 .5 .7 1];
 
 binned = arrayfun(@(x) discretize(x.pupil, edge_struct.custom), ...
     all_pupil, 'UniformOutput', false);

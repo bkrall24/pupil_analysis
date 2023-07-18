@@ -5,6 +5,7 @@
 %% Add path
 clearvars
 addpath(genpath('W:\Code\Becca'));
+addpath(genpath('W:\Code\Keith'));
 
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
@@ -16,6 +17,10 @@ spreadsheet = "D:\Data\Arousal_Project\dataSpreadsheet.csv";
 opts = detectImportOptions(spreadsheet);
 opts = setvartype(opts,{'FOV'},'char');
 sp   = readtable(spreadsheet,opts);
+
+
+% removeThis = ~cellfun(@isempty, sp.matchMatDir);
+% sp(removeThis,:) = [];
 
 
 %% Determine pupil binning
@@ -47,7 +52,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'ET';
+cell_type = 'Nonspecific';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -70,7 +75,7 @@ match_boo = true;
 
 
 % Save the above structs
-save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\withoutMatched\']
 save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
 save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
 save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
@@ -135,10 +140,11 @@ neural.index = index;
 
 % Create new variable, convert column format from cell to string, assign to
 % the same column and rename the column
-data_csv       = data_choice;
+data_csv       = sp;
 data_csv(:,24) = varfun(@string, data_csv(:,23));
 data_csv(:,23) = [];
 data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
+data_csv.MainPath = repmat({'D:\Data\Arousal_Project\'}, size(data_csv, 1), 1);
 
 
 %% From here, do your analysis.
@@ -148,22 +154,14 @@ data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
 bf = response_at_BF(neural.zscores, neural.index, pupil.bins, ...
     logical(neural.sound_resp), 10);
 
-% Plot aesthetics
-gcf
-box off
-xticks(1:num_bins)
-xticklabels(edge_struct.custom(2:end))
-xlabel('Pupil (% max)')
-ylim([0.3 1.1])
-ylabel('Response (z-scored)')
-title(sprintf([groupTypes{group}]))
-sgtitle('Response at BF')
 
-%% 
+%% Set pupil binning parameters
 
-groupNames = {'Nonspecific','IT','ET','CT'};  % corresponding to folders
-titleNames = {'L 2/3','ET','L5 IT','CT'};     % to use as plot titles
-groupColor = [0, 0.4471, 0.7412 ; 0.8510, 0.3255, 0.0980 ; ...
-                            0.9294, 0.6941, 0.1255; 0.7176, 0.2745, 1];
+% Get nBins and edges
+num_bins = 3;
+[edge_struct, norm_p] = generate_pupil_bin_edges(sp, num_bins);
 
+% Option to discretize based on custom pupil bins
+edge_struct.custom = [0 .5 .7 1];
 
+plotBFState(edge_struct.custom)
