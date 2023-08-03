@@ -4,8 +4,8 @@
 
 %% Add path
 clearvars
-addpath(genpath('W:\Code\Becca'));
-addpath(genpath('W:\Code\Keith'));
+addpath(genpath('.\functions for MT\'))
+addpath(genpath('W:\Code\Keith\New_pupil_pipeline'))
 
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
