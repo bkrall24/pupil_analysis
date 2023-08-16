@@ -16,12 +16,24 @@ function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
         mkdir(experiment_dir{1}, 'MAT');
     end 
 
+    
+    % Change from NAS directory to local directory (delete later)  [dtd 6/30/23, Keith]
+    % Ensures camera and impale folders are linked to NAS whereas the other
+    % folders aren't
+    experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'W:', 'D:');
+    
+   
+    
     full_path = [experiment_dir{1},'\MAT\pupil_data.mat'];
     
     experiment_file = [experiment_dir{1},'\MAT\initial_analysis.mat'];
     exp_id.name = string(char(d_c{1,3}));
     exp_id.date = num2str(d_c{1,4});
     exp_id.cell_type = num2str(d_c{1,4});
+    
+
+    
+    
     
     if isfile(experiment_file)
         sync_file = experiment_file;
@@ -35,7 +47,6 @@ function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
         else
             sync_folder = '\SyncData00';
         end
-        
         if (d_c.Date) < 100000
             thorFolder = [d_c.MainPath, d_c.CellType, '\2P\', d_c.Animal, '\0', num2str(d_c.Date) sync_folder, impaleIndex];
         else

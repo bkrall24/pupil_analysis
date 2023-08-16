@@ -2,11 +2,25 @@
 % The goal of this code is simplify data extraction and organization to
 % streamline analysis of neural data based on pupil states
 
+%% Add path
+clearvars
+addpath(genpath('.\functions for MT\'))
+addpath(genpath('W:\Code\Keith\New_pupil_pipeline'))
+
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
 
 spreadsheet = "D:\Data\Arousal_Project\dataSpreadsheet.csv";
-sp = readtable(spreadsheet);
+
+% Convert FOV column into char to allow users to input numerical as
+% well as alphanumerical values
+opts = detectImportOptions(spreadsheet);
+opts = setvartype(opts,{'FOV'},'char');
+sp   = readtable(spreadsheet,opts);
+
+
+% removeThis = ~cellfun(@isempty, sp.matchMatDir);
+% sp(removeThis,:) = [];
 
 
 %% Determine pupil binning
@@ -33,12 +47,12 @@ num_bins = 3;
 % edges = low:(high-low)/num_bins:high
 
 %% Grab data
-% In this case, I'm selecting 'nonspecific' cell type. Use whatever method
+% Select data based on a given cell type. Use whatever method
 % you want to select data (i.e. choose experiments) but you'll want to have
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'Nonspecific';
+cell_type = 'ET';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -50,16 +64,40 @@ p = norm_p.animal(contains(sp{:,2}, cell_type));
 % but the cell_index will be the same for cells that are matched. I would
 % save these structs as they are very useful starting points for analysis.
 
-match_boo = false;
+% [cells * stim * reps]. The 'cells' are based on matched indexing, whereby
+% the no. of cells is based on whether it was matched to the first day of
+% imaging (ie, if a cell didn't match to a cell from Day 1, then it was
+% given a new cell ID). This can turn a FOV with 300 cells matched across 6
+% days, and ramp up the no. of cells to 1000.
+match_boo = true;
 [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,...
     match_boo);
+
+
+% Save the above structs
+save_loc = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\']
+save(fullfile(save_loc, 'all_neural.mat'), 'all_neural');
+save(fullfile(save_loc, 'all_pupil.mat'), 'all_pupil');
+save(fullfile(save_loc, 'all_ref.mat'), 'all_ref');
+
+
+%% Load data
+
+cell_type = 'ET';
+load_loc  = ['D:\Data\Arousal_Project\',cell_type,'\Data_structs\'];
+load([load_loc,'all_neural'])
+load([load_loc,'all_pupil'])
+load([load_loc,'all_ref'])
 
 %% Bin Pupil
 % Just use discretize to easily bin each row of your all_pupil struct. A
 % nice thing here is you can change the binning incredibly easily with just
 % two lines of code.
 
-binned = arrayfun(@(x) discretize(x.pupil, edge_struct.even_all), ...
+% Option to discretize based on custom pupil bins
+edge_struct.custom = [0 .5 .7 1];
+
+binned = arrayfun(@(x) discretize(x.pupil, edge_struct.custom), ...
     all_pupil, 'UniformOutput', false);
 [all_pupil.bins] = binned{:};
 
@@ -96,10 +134,34 @@ index = cat(1, index{:});
 neural.index = index;
 
 
-%% From here, do your analysis. 
+%% Create new data_choice variable to use on older code
+% To use the same data_choice table for the other code, the match_dir
+% column class must be changed from a 'cell' to a 'string'
+
+% Create new variable, convert column format from cell to string, assign to
+% the same column and rename the column
+data_csv       = sp;
+data_csv(:,24) = varfun(@string, data_csv(:,23));
+data_csv(:,23) = [];
+data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
+data_csv.MainPath = repmat({'D:\Data\Arousal_Project\'}, size(data_csv, 1), 1);
+
+
+%% From here, do your analysis.
 %  response_at_BF is a good example of a simple process to easily generate
 %  your data.
 
 bf = response_at_BF(neural.zscores, neural.index, pupil.bins, ...
     logical(neural.sound_resp), 10);
 
+
+%% Set pupil binning parameters
+
+% Get nBins and edges
+num_bins = 3;
+[edge_struct, norm_p] = generate_pupil_bin_edges(sp, num_bins);
+
+% Option to discretize based on custom pupil bins
+edge_struct.custom = [0 .5 .7 1];
+
+plotBFState(edge_struct.custom)

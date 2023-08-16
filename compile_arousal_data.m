@@ -45,7 +45,7 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
             ref_match = [];
             match_index = [];
             match_ind = 1;
-            for k = 1:length(roiMatchData.allRois)
+            for k = 1:length(roiMatchData.allRois) 
 
                 % identify the corresponding row of data in table
                 row = find(arrayfun(@(x) contains(roiMatchData.allRois{k},x), string(match_choice{:,4})));
