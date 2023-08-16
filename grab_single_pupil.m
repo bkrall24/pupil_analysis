@@ -1,4 +1,4 @@
-function pupil = grab_single_pupil(d_c, filtered)
+function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
 
     % future issues: add tosca capabilities here. incorporate the same
     % basic code structure for impale and tosca
@@ -19,7 +19,9 @@ function pupil = grab_single_pupil(d_c, filtered)
     full_path = [experiment_dir{1},'\MAT\pupil_data.mat'];
     
     experiment_file = [experiment_dir{1},'\MAT\initial_analysis.mat'];
-
+    exp_id.name = string(char(d_c{1,3}));
+    exp_id.date = num2str(d_c{1,4});
+    exp_id.cell_type = num2str(d_c{1,4});
     
     if isfile(experiment_file)
         sync_file = experiment_file;

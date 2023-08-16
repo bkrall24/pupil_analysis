@@ -50,7 +50,7 @@ p = norm_p.animal(contains(sp{:,2}, cell_type));
 % but the cell_index will be the same for cells that are matched. I would
 % save these structs as they are very useful starting points for analysis.
 
-match_boo = true;
+match_boo = false;
 [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,...
     match_boo);
 
