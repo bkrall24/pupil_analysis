@@ -52,7 +52,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'Nonspecific';
+cell_type = 'ET';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
