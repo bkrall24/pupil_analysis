@@ -4,8 +4,10 @@
 
 %% Add path
 clearvars
+cd 'C:\Users\Williamson_Lab\Documents\GitHub\mouse-track'
 addpath(genpath('.\functions for MT\'))
 addpath(genpath('W:\Code\Keith\New_pupil_pipeline'))
+cd 'C:\Users\Williamson_Lab\Documents\GitHub\pupil_analysis'
 
 %% Determine data of interest
 % Initial extraction code relies on the data spreadsheets. 
@@ -52,7 +54,7 @@ num_bins = 3;
 % a reference to what rows you're choosing of your spreadsheet cause then
 % you'll use the same indices to select the pupil data from norm_p.animal. 
 
-cell_type = 'ET';
+cell_type = 'IT';
 data_choice = sp(contains(sp{:,2}, cell_type),:);
 p = norm_p.animal(contains(sp{:,2}, cell_type));
 
@@ -128,11 +130,28 @@ pupil = concatenate_struct_array(all_pupil, max_pupil);
 % first dimension of neural data that refers to the corresponding row in
 % the pupil data.
 
-index = arrayfun(@(x) repmat(x.index, x.cell_count,1), all_ref, ...
+% edits 8.28.23
+thisRef = all_ref;
+% Calculate the sum of each row in cell_count and replace the values
+for i = 1:numel(thisRef)
+    thisRef(i).cell_count = sum(thisRef(i).cell_count);
+end
+
+index = arrayfun(@(x) repmat(x.index, x.cell_count,1), thisRef, ...
     'UniformOutput', false);
 index = cat(1, index{:});
 neural.index = index;
 
+
+% index = arrayfun(@(x) repmat(x.index, x.cell_count,1), all_ref, ...
+%     'UniformOutput', false);
+% index = cat(1, index{:});
+% neural.index = index;
+
+
+%% Trials counts [cells * stim * state], elements are trials
+
+trial_count = stim_state_count(neural.spikes, index, pupil.bins);
 
 %% Create new data_choice variable to use on older code
 % To use the same data_choice table for the other code, the match_dir
@@ -147,12 +166,20 @@ data_csv       = renamevars(data_csv,["Var24"],["matchMatDir"]);
 data_csv.MainPath = repmat({'D:\Data\Arousal_Project\'}, size(data_csv, 1), 1);
 
 
-%% From here, do your analysis.
-%  response_at_BF is a good example of a simple process to easily generate
-%  your data.
+%% Modulation motif analysis
 
+
+
+
+%% Single cell-type analysis
+
+% Response at BF across states
 bf = response_at_BF(neural.zscores, neural.index, pupil.bins, ...
     logical(neural.sound_resp), 10);
+
+% Reliability
+stateStruct = struct('index',neural.index,'bins',pupil.bins,'trial_threshold',10);
+rel = get_reliability(neural.zscores,logical(neural.sound_resp),'State',stateStruct);
 
 
 %% Set pupil binning parameters
@@ -164,4 +191,17 @@ num_bins = 3;
 % Option to discretize based on custom pupil bins
 edge_struct.custom = [0 .5 .7 1];
 
+
+%% Plotting summary data
+
+type = 4;
+plotMotifs(type)
+
+%% Plotting of single cell analysis
+
+% Response at BF
 plotBFState(edge_struct.custom)
+
+% Reliability
+
+

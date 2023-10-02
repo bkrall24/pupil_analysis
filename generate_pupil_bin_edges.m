@@ -3,7 +3,7 @@ function [edge_struct, norm_p] = generate_pupil_bin_edges(data_choice, num_bins)
     % Function to easily generate multiple options for binning pupil data.
     % First it normalizes the pupil to a max value. This is done across all
     % possible pupil values within an animal or a given session. Then using
-    % that data it generates bins in four ways. First it creates on set of
+    % that data it generates bins in four ways. First it creates a set of
     % equally sized bins that span the entire range of pupil across all
     % animals (even_all). Then it creates bins with the same number of
     % samples in each bin (sample_all) but unequal bin sizes. Then it does
