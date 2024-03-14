@@ -35,17 +35,37 @@ function [neural_struct, pupil_struct, trial_ref] = compile_data_fields(p, d, sp
 %     pupil_indices = mean(mi,2);
     
     
-    neural_struct.spikes = spikes;
-    neural_struct.zscores = zscores;
+    neural_struct.spikes     = spikes;
+    neural_struct.zscores    = zscores;
     neural_struct.sound_resp = logical(resp);
-    neural_struct.sound_beta = beta(:,2:16);
-    neural_struct.pupil_mod = beta(:,18);
+    
+    % Grab betas based on which param was played
+    if contains(d.Parameter,'Noise')
+        neural_struct.sound_beta   = beta(:,2);
+        neural_struct.pupil_mod    = beta(:,end);
+        neural_struct.yx_corr      = double(d.yx_corr);
+        neural_struct.sumTrialResp = d.sumTrialResp;
+    else  % FreqOneD params
+        neural_struct.sound_beta = beta(:,2:16);
+        neural_struct.pupil_mod  = beta(:,18);
+        neural_struct.yx_corr      = double(d.yx_corr);
+        neural_struct.sumTrialResp = d.sumTrialResp;
+    end
+    
    % neural_struct.trial_ref = trial_ref;
 %     neural_struct.sound_mod = sound_mod;
 %     neural_struct.pupil_mod = pupil_mod';
 %     neural_struct.noise_mod = noise_mod';
 %     neural_struct.rsquare = rsquare';
-    pupil_struct.pupil = pupil;
+
+% If pupil is 2D [1 * X], transform matrix into 3D array
+    if numel(size(pupil)) == 2
+        pupil_reshaped = reshape(pupil, [1, 1, size(pupil,2)]);
+        pupil_struct.pupil = pupil_reshaped;
+    else 
+        pupil_struct.pupil = pupil;
+    end
+        
 %     pupil_struct.bins = bins;
 %     neural_struct.pupil_resp = pupil_resp;
 %     neural_struct.pupil_mod = pupil_indices;
