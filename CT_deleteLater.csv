@@ -1,0 +1,18 @@
+MainPath,CellType,Animal,Date,Suite2PParameterFile,ImpaleParameterFile,FolderMergeNumber,Exclude,FOV,DayIndex,Day,Zoom,Location,BF,Depth,ToscaParameterFile,ToscaSession,ToscaRun,nPlanes,nFlybackFrames,Notes,stim_software,matchMatDir
+W:\Data\Arousal_Project\,CT,Ntsr1_176,52123,1-1-FreqOneD,1-1-FreqOneD,1,NaN,2,1,1,1,A1,Low (0-15 kHz),665,,,,,,,Impale,W:\Data\Arousal_Project\CT\2P\Ntsr1_176\matchFOV2.mat
+W:\Data\Arousal_Project\,CT,Ntsr1_176,52223,1-1-Noise,1-2-FreqOneD,2,NaN,2,2,2,1,A1,Low (0-15 kHz),665,,,,,,,Impale,W:\Data\Arousal_Project\CT\2P\Ntsr1_176\matchFOV2.mat
+W:\Data\Arousal_Project\,CT,Ntsr1_176,52323,1-1-FreqOneD,1-1-FreqOneD,1,NaN,2,3,3,1,A1,Low (0-15 kHz),665,,,,,,,Impale,W:\Data\Arousal_Project\CT\2P\Ntsr1_176\matchFOV2.mat
+W:\Data\Arousal_Project\,CT,Ntsr1_247,102823,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,1,1,1,A1,Low (0-15 kHz),685,,,,,,,Impale,W:\Data\Arousal_Project\CT\2P\Ntsr1_247\matchFOV1.mat
+W:\Data\Arousal_Project\,CT,Ntsr1_247,102923,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,2,2,1,A1,Low (0-15 kHz),668,,,,,,,Impale,W:\Data\Arousal_Project\CT\2P\Ntsr1_247\matchFOV1.mat
+W:\Data\Arousal_Project\,CT,Ntsr1_247,110323,1-2-FreqOneD,1-2-FreqOneD,1,NaN,2,1,1,1,A1,Low (0-15 kHz),727,,,,,,,Impale,
+X:\Data\Arousal_Project\,CT,Ntsr1_285,13124,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,1,1,2,A1,Low (0-15 kHz),682,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV1.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_285,20224,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,2,2,2,A1,Low (0-15 kHz),684,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV1.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_285,20324,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,3,3,2,A1,Low (0-15 kHz),674,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV1.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_285,20424,1-1-FreqOneD,1-1-FreqOneD,1,NaN,2,1,1,2,A1,Low (0-15 kHz),630,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV2.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_285,20524,1-1-FreqOneD,1-1-FreqOneD,1,NaN,2,2,2,2,A1,Low (0-15 kHz),622,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV2.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_285,20624,1-1-FreqOneD,1-1-FreqOneD,1,NaN,2,3,3,2,A1,Low (0-15 kHz),626,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV2.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_285,20724,1-1-FreqOneD,1-1-FreqOneD,1,NaN,2,4,4,2,A1,Low (0-15 kHz),619,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_285\matchFOV2.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_283,20524,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,1,1,1,A1,Low (0-15 kHz),639,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_283\matchFOV1.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_283,20624,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,2,2,1,A1,Low (0-15 kHz),648,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_283\matchFOV1.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_283,20724,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,3,3,1,A1,Low (0-15 kHz),645,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_283\matchFOV1.mat
+X:\Data\Arousal_Project\,CT,Ntsr1_283,20824,1-1-FreqOneD,1-1-FreqOneD,1,NaN,1,4,4,1,A1,Low (0-15 kHz),645,,,,,,,Impale,X:\Data\Arousal_Project\CT\2P\Ntsr1_283\matchFOV1.mat
