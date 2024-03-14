@@ -10,7 +10,7 @@ function st2 = concatenate_struct_array(st, trials)
         for i = 1:length(field_id)
             field_size = size(st(1).(field_id{i}));
             
-            
+            % Any 3D arrays are NaN padded
             if length(field_size) == 3
                 st2.(field_id{i}) = [];
                 
