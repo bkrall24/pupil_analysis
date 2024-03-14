@@ -33,6 +33,7 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
 
         % load each match file and identify the corresponding data files
         % according to the Fall.mat files listed in the roiMatch struct
+            % unmatched files skip this FOR loop
         for j = 1:length(match_files)
 
             this_file = strrep(match_files(j), 'D:', 'W:');
@@ -127,6 +128,13 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
                     d2.spike_traces = d.spike_traces;
                     d2.inner_index = d.inner_index;
                     d2.inner_sequence = d.inner_sequence;
+                    d2.Parameter = d.Parameter;
+%                     if contains(d.Parameter,'Noise')
+                        d2.yx_corr = d.yx_corr;
+                        % === Sum up spike events during resp_wind (needed for NC) ===
+                        [sumTrialResp,~] = get_trialResp(d,resp_window);
+                        d2.sumTrialResp  = sumTrialResp;
+%                     end
                     
                     ref_struct.animal_id = string(match_choice{row, 3}{:});
                     ref_struct.cell_type = string(match_choice{row, 2}{:});
@@ -150,7 +158,6 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
                     ref_match, spont_window, resp_window);
                
                     
-                
                 ref_struct.animal_id = unique([ref_match.animal_id]);
                 ref_struct.date_id = [ref_match.date_id];
                 ref_struct.cell_type = unique([ref_match.cell_type]);
@@ -177,6 +184,13 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
         for q = 1:height(unmatched)
 
             d = grab_single_experiment(unmatched(q,:));
+            
+%             if contains(d.Parameter,'Noise')
+                % ==== Sum up spike events during resp_wind (needed for NC) ====
+                [sumTrialResp,~] = get_trialResp(d,resp_window);
+                d.sumTrialResp   = sumTrialResp;
+%             end
+            
             [neural_struct, pupil_struct, trial_ref] = compile_data_fields(unmatched_pupil{q}, d, ...
                  spont_window, resp_window);
 
