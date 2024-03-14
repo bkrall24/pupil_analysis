@@ -21,23 +21,13 @@ function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
     % Ensures camera and impale folders are linked to NAS whereas the other
     % folders aren't
     experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'W:', 'D:');
+    experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'X:', 'D:');
     
-   
-    
+   % Get full path for pupil_data file  
     full_path = [experiment_dir{1},'\MAT\pupil_data.mat'];
-    
-    experiment_file = [experiment_dir{1},'\MAT\initial_analysis.mat'];
-    exp_id.name = string(char(d_c{1,3}));
-    exp_id.date = num2str(d_c{1,4});
-    exp_id.cell_type = num2str(d_c{1,4});
-    
+        
 
-    
-    
-    
-    if isfile(experiment_file)
-        sync_file = experiment_file;
-    else
+    % Get ThorSync file (.h5) directory
         impaleName = split(d_c.ImpaleParameterFile,{'-'});
         impaleIndex = impaleName{2};
         if str2double(impaleIndex) > 99
@@ -52,9 +42,7 @@ function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
         else
             thorFolder = [d_c.MainPath, d_c.CellType, '\2P\', d_c.Animal, '\', num2str(d_c.Date) sync_folder, impaleIndex];
         end
-        data_sync = dir2(thorFolder, '.h5', '/s');
-        sync_file = data_sync{1};
-    end
+        sync_file = [[thorFolder{:}], '\Episode001.h5'];
     
 
     try
@@ -65,18 +53,10 @@ function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
     catch
         dumDir = split(experiment_dir,'\');
         dums = [dumDir{4},'\',dumDir{6},'\',dumDir{7},'\',dumDir{8}];
-        disp(['Processing pupil_data for: ',dums] )   
-        
-        %if isequal(d_c(1,:).stim_software, "Impale")
+        disp(['Processing pupil_data for: ',dums] )        
             
         [pupil, inner, outer] = extract_pupil_impale(camera_folder, impale_file, sync_file, filtered);
         save(full_path, 'pupil');
-        %else
-       % disp("GOTTA ADD THIS CAPABILITY <3 BECCA 5.31.23")
-        %end
     end
-
-    
-    
 
 end
