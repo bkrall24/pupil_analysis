@@ -8,16 +8,18 @@ function [pupil, inner, outer] = extract_pupil_impale(camera_folder, impale_file
     % initial_analysis.mat file (faster) 
     [~, ~, extension] = fileparts(sync_file);
     if contains(extension, '.h5')
-        sync_info = extract_ThorSyncData(thorSync_file,'Impale',1);
-        tTrial = sync_info.tTrial;
-        tFrame = sync_info.tFrame;
+        disp('Extracting ThorSync data to retrieve tTrial and tFrame')
+        [syncInfo] = extract_ThorSyncData(sync_file,'Impale',1);
+        tTrial = syncInfo.tTrial;
+        tFrame = syncInfo.tFrame;
     else
         load(sync_file)
         try
             tTrial = d.tTrial;
             tFrame = d.tFrame;
         catch
-            error("Sync file entered contains no tTrial or tFrame info")
+            error(['File entered contains no tTrial or tFrame info...',...
+                'check to see if sync_file dir was created correctly'])
         end
     end
     
