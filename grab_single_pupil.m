@@ -1,4 +1,4 @@
-function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
+function [pupil] = grab_single_pupil(d_c, filtered)
 
     % future issues: add tosca capabilities here. incorporate the same
     % basic code structure for impale and tosca
@@ -20,8 +20,8 @@ function [pupil, exp_id] = grab_single_pupil(d_c, filtered)
     % Change from NAS directory to local directory (delete later)  [dtd 6/30/23, Keith]
     % Ensures camera and impale folders are linked to NAS whereas the other
     % folders aren't
-    experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'W:', 'D:');
-    experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'X:', 'D:');
+%     experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'W:', 'D:');
+%     experiment_dir{1,1} = strrep(experiment_dir{1,1}, 'X:', 'D:');
     
    % Get full path for pupil_data file  
     full_path = [experiment_dir{1},'\MAT\pupil_data.mat'];
