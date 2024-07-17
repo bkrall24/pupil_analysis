@@ -19,16 +19,16 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
 
         % pull out rows containing all information for a given animal
         animal_choice = data_choice( ismember(data_choice.Animal, animals{i}), :);
-        animal_pupil = p(ismember(data_choice.Animal, animals{i}));
+        animal_pupil  = p(ismember(data_choice.Animal, animals{i}));
         
         % identify which FOVs have a match file
-        mf = animal_choice{:,23};
+        mf      = animal_choice{:,23};
         matched = ~cellfun(@isempty, mf);
 
         % identify shared match files across FOVs 
         [counts, match_files] =  groupcounts(string(mf(matched,:)));
-        match_files = match_files(counts > 1);
-        matched = ismember(mf, match_files);
+        match_files           = match_files(counts > 1);
+        matched               = ismember(mf, match_files);
 
 
         % load each match file and identify the corresponding data files
@@ -36,21 +36,21 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
             % unmatched files skip this FOR loop
         for j = 1:length(match_files)
 
-            this_file = strrep(match_files(j), 'D:', 'W:');
-            load(this_file);
+            load(match_files(j));
             match_choice = animal_choice(ismember(mf, match_files(j)),:);
-            match_pupil = animal_pupil(ismember(mf, match_files(j)));
+            match_pupil  = animal_pupil(ismember(mf, match_files(j)));
 
             neural_match = [];
-            pupil_match = [];
-            ref_match = [];
-            match_index = [];
-            match_ind = 1;
-            for k = 1:length(roiMatchData.allRois) 
+            pupil_match  = [];
+            ref_match    = [];
+            match_index  = [];
+            match_ind    = 1;
+            for k = 1:length(roiMatchData.allRois)  % iterate matched days
 
                 % identify the corresponding row of data in table
                 row = find(arrayfun(@(x) contains(roiMatchData.allRois{k},x), string(match_choice{:,4})));
                 
+                % ====== Analyze matched Days as UNMATCHED =======
                 if ~isempty(row) && ~match_boo
 
                     % Load the data and pull out the relevant data and nan-pad
@@ -81,15 +81,15 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
 
                     
                     neural_struct.cell_ids = cell_index';
-                    ref_struct.animal_id = string(match_choice{row, 3}{:});
-                    ref_struct.cell_type = string(match_choice{row, 2}{:});
-                    ref_struct.date_id = (match_choice{row, 4});
-                    ref_struct.parameter = match_choice{row, 6};
-                    ref_struct.directory = match_choice{row, 1};
-                    ref_struct.cell_count = size(neural_struct.spikes,1);
+                    ref_struct.animal_id   = string(match_choice{row, 3}{:});
+                    ref_struct.cell_type   = string(match_choice{row, 2}{:});
+                    ref_struct.date_id     = (match_choice{row, 4});
+                    ref_struct.parameter   = match_choice{row, 6};
+                    ref_struct.directory   = match_choice{row, 1};
+                    ref_struct.cell_count  = size(neural_struct.spikes,1);
                     ref_struct.trial_count = size(neural_struct.spikes,3);
-                    ref_struct.match_file = match_files(j);
-                    ref_struct.trial_ref = trial_ref;
+                    ref_struct.match_file  = match_files(j);
+                    ref_struct.trial_ref   = trial_ref;
                   
                     % If not combining trials of matched cells, just
                     % concatenate the structs to the array of structs
@@ -99,17 +99,18 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
                     ref_struct.index = ind;
                     ind = ind +1;
 
-                    all_ref = cat(1, all_ref, ref_struct);
+                    all_ref    = cat(1, all_ref, ref_struct);
                     all_neural = cat(1, all_neural, neural_struct);
-                    all_pupil = cat(1, all_pupil, pupil_struct);
+                    all_pupil  = cat(1, all_pupil, pupil_struct);
                         
-                   
+                
+                % ====== Analyze matched Days as MATCHED =======
                 elseif ~isempty(row) 
                     d = grab_single_experiment(match_choice(row,:));
                     
                     if k == 1 || isempty(match_index)
-                        cell_index = [1:size(d.spike_zscores,1)] + last_ind;
-                        last_ind = max(cell_index);
+                        cell_index  = [1:size(d.spike_zscores,1)] + last_ind;
+                        last_ind    = max(cell_index);
                         match_index = cell_index(roiMatchData.allSessionMapping(:,k));
                         
                         % for all remaining days, place the references to matched
@@ -120,38 +121,37 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
                         temp_index(roiMatchData.allSessionMapping(:,k)) = match_index;
                         temp_index(isnan(temp_index)) = [1:sum(isnan(temp_index))] + last_ind;
                         cell_index = temp_index;
-                        last_ind = max(cell_index);
+                        last_ind   = max(cell_index);
                     end
                     
-                    d2.cell_ids = cell_index';
-                    d2.spike_zscores = d.spike_zscores;
-                    d2.spike_traces = d.spike_traces;
-                    d2.inner_index = d.inner_index;
+                    % Elements in cell_ids correspond to the indices of...
+                    d2.cell_ids       = cell_index';
+                    d2.spike_zscores  = d.spike_zscores;
+                    d2.spike_traces   = d.spike_traces;
+                    d2.inner_index    = d.inner_index;
                     d2.inner_sequence = d.inner_sequence;
-                    d2.Parameter = d.Parameter;
-%                     if contains(d.Parameter,'Noise')
-                        d2.yx_corr = d.yx_corr;
-                        % === Sum up spike events during resp_wind (needed for NC) ===
-                        [sumTrialResp,~] = get_trialResp(d,resp_window);
-                        d2.sumTrialResp  = sumTrialResp;
-%                     end
+                    d2.Parameter      = d.Parameter;
+                    d2.yx_corr        = d.yx_corr;                        
+                    [sumTrialResp,~]  = get_trialResp(d,resp_window);
+                    d2.sumTrialResp   = sumTrialResp;  % for noise corr
                     
-                    ref_struct.animal_id = string(match_choice{row, 3}{:});
-                    ref_struct.cell_type = string(match_choice{row, 2}{:});
-                    ref_struct.date_id = (match_choice{row, 4});
+                    ref_struct.animal_id  = string(match_choice{row, 3}{:});
+                    ref_struct.cell_type  = string(match_choice{row, 2}{:});
+                    ref_struct.date_id    = (match_choice{row, 4});
                     ref_struct.cell_count = size(d2.spike_zscores,1);
-                    ref_struct.parameter = match_choice{row, 6};
-                    ref_struct.directory = match_choice{row, 1};
-                    ref_struct.index = match_ind;
-                    match_ind = match_ind +1;
-                    ref_match = cat(1, ref_match, ref_struct);
-                    neural_match = cat(1, neural_match, d2);
-                    pupil_match = cat(2, pupil_match, match_pupil{row});
+                    ref_struct.parameter  = match_choice{row, 6};
+                    ref_struct.directory  = match_choice{row, 1};
+                    ref_struct.index      = match_ind;
+                    match_ind             = match_ind +1;
+                    ref_match             = cat(1, ref_match, ref_struct);
+                    neural_match          = cat(1, neural_match, d2);
+                    pupil_match           = cat(2, pupil_match, match_pupil{row});
                 end
-                    
                 
             end
             
+            
+            % ====== FOR MATCHED =======
             if match_boo
                 [neural_struct, pupil_struct, trial_ref]  = ...
                     combine_matched_cells(neural_match, pupil_match,...
@@ -184,12 +184,8 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
         for q = 1:height(unmatched)
 
             d = grab_single_experiment(unmatched(q,:));
-            
-%             if contains(d.Parameter,'Noise')
-                % ==== Sum up spike events during resp_wind (needed for NC) ====
-                [sumTrialResp,~] = get_trialResp(d,resp_window);
-                d.sumTrialResp   = sumTrialResp;
-%             end
+            [sumTrialResp,~] = get_trialResp(d,resp_window);
+            d.sumTrialResp   = sumTrialResp;  % for noise correlations
             
             [neural_struct, pupil_struct, trial_ref] = compile_data_fields(unmatched_pupil{q}, d, ...
                  spont_window, resp_window);
@@ -197,23 +193,24 @@ function [all_neural, all_pupil, all_ref] = compile_arousal_data(data_choice, p,
             cell_index = [1:size(neural_struct.spikes,1)] + last_ind;
             last_ind = max(cell_index);
 
-            neural_struct.cell_ids = cell_index';
+            neural_struct.cell_ids     = cell_index';
             neural_struct.matched_days = zeros(size(neural_struct.cell_ids));
-            ref_struct.animal_id = string(unmatched{q,3}{:});
-            ref_struct.date_id = (unmatched{q,4});
-            ref_struct.parameter = unmatched{q,6};
-            ref_struct.cell_type = string(unmatched{q,2}{:});
-            ref_struct.index = ind;
-            ref_struct.cell_count = size(neural_struct.spikes,1);
-            ref_struct.trial_count = size(neural_struct.spikes,3);
-            ref_struct.match_file = [];
-            ref_struct.directory = unmatched{q, 1};
-            ref_struct.trial_ref = trial_ref;
-            ind = ind +1;
+            neural_struct.cell_ref     = (1:size(neural_struct.cell_ids,1))';
+            ref_struct.animal_id       = string(unmatched{q,3}{:});
+            ref_struct.date_id         = (unmatched{q,4});
+            ref_struct.parameter       = unmatched{q,6};
+            ref_struct.cell_type       = string(unmatched{q,2}{:});
+            ref_struct.index           = ind;
+            ref_struct.cell_count      = size(neural_struct.spikes,1);
+            ref_struct.trial_count     = size(neural_struct.spikes,3);
+            ref_struct.match_file      = [];
+            ref_struct.directory       = unmatched{q, 1};
+            ref_struct.trial_ref       = trial_ref;
+            ind                        = ind +1;
 
-            all_ref = cat(1, all_ref, ref_struct);
+            all_ref    = cat(1, all_ref, ref_struct);
             all_neural = cat(1, all_neural, neural_struct);
-            all_pupil = cat(1, all_pupil, pupil_struct);
+            all_pupil  = cat(1, all_pupil, pupil_struct);
 
         end   
     end  

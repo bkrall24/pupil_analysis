@@ -38,13 +38,13 @@ function eyeData = extract_pupil_diameter(filename, rows)
 
     thresh = 0.95;
     eyeData = nan(size(pupil_matrix,1),6);
-    parfor i=1:size(pupil_matrix,1)
+    parfor ii = 1:size(pupil_matrix,1)
 
         warning off
-        goodPoints = (pupil_lik(i,:) > thresh);
+        goodPoints = (pupil_lik(ii,:) > thresh);
 
         if sum(goodPoints) > 5
-            pupil_points = [pupil_x(i,goodPoints); pupil_y(i,goodPoints)];
+            pupil_points = [pupil_x(ii,goodPoints); pupil_y(ii,goodPoints)];
         end
 
         try            
@@ -60,10 +60,10 @@ function eyeData = extract_pupil_diameter(filename, rows)
 
         end
 
-        goodEyes = (eye_lik(i,:) > thresh);
+        goodEyes = (eye_lik(ii,:) > thresh);
 
         if sum(goodEyes) > 5
-            eye_points = [eye_x(i,goodPoints); eye_y(i,goodPoints)];
+            eye_points = [eye_x(ii,goodPoints); eye_y(ii,goodPoints)];
         end
 
         try            
@@ -79,8 +79,8 @@ function eyeData = extract_pupil_diameter(filename, rows)
 
         end
 
-        eyeData(i,:) = [pupil_diameter, pupil_height, pupil_center, eye_diameter, eye_height, eye_center];
-
-    end   
+        eyeData(ii,:) = [pupil_diameter, pupil_height, pupil_center, eye_diameter, eye_height, eye_center];
+    end
+    
 end
 
